@@ -3,7 +3,9 @@
 ## My personal game engine!!!
 
 ### 使用方法
-从https://github.com/vagrant051/Apollo下载后运行GenerateProject.bat批处理文件自动生成visual studio解决方案
+网址：https://github.com/vagrant051/Apollo
+
+下载后运行GenerateProject.bat批处理文件自动生成visual studio解决方案
 
 ---
 

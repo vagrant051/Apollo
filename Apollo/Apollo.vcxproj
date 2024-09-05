@@ -82,6 +82,7 @@
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,6 +109,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -135,6 +137,7 @@
       <StringPooling>true</StringPooling>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <LanguageStandard>stdcpp17</LanguageStandard>
+      <ExternalWarningLevel>Level3</ExternalWarningLevel>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -151,7 +154,6 @@
   <ItemGroup>
     <ClInclude Include="src\Apollo.h" />
     <ClInclude Include="src\Apollo\Application.h" />
-    <ClInclude Include="src\Apollo\core\Timestep.h" />
     <ClInclude Include="src\Apollo\EntryPoint.h" />
     <ClInclude Include="src\Apollo\Events\ApplicationEvent.h" />
     <ClInclude Include="src\Apollo\Events\Event.h" />
@@ -174,6 +176,7 @@
     <ClInclude Include="src\Apollo\Renderer\VertexArray.h" />
     <ClInclude Include="src\Apollo\Windows.h" />
     <ClInclude Include="src\Apollo\core.h" />
+    <ClInclude Include="src\Apollo\core\Timestep.h" />
     <ClInclude Include="src\Apollo\input.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLBuffer.h" />
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h" />

@@ -23,6 +23,8 @@
 #include "Apollo/Renderer/RenderCommand.h"
 #include "Apollo/Renderer/Renderer.h"
 #include "Apollo/Renderer/Renderer2D.h"
+#include "Apollo/Renderer/SubTexture2D.h"
+#include "Apollo/Renderer/SpriteAnimation.h"
 #include "Apollo/Renderer/Framebuffer.h"
 
 // Entry Point

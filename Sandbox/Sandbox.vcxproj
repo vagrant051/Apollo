@@ -146,6 +146,10 @@
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Level.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\Level.cpp" />
     <ClCompile Include="src\SandboxApp.cpp" />
   </ItemGroup>
   <ItemGroup>

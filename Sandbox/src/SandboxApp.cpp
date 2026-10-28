@@ -1,4 +1,5 @@
 #include "Apollo.h"
+#include "Level.h"
 
 #include "imgui/imgui.h"
 
@@ -15,21 +16,18 @@ public:
 	{
 		m_FloorTexture = Apollo::Texture2D::Create("assets/textures/floor.png");
 		m_BlockTexture = Apollo::Texture2D::Create("assets/textures/block.png");
+		m_Atlas = Apollo::Texture2D::Create("assets/textures/atlas.png");
 
-		m_Obstacles = {
-			{ 1.50f, 0.90f },
-			{ 1.50f, 1.15f },
-			{ 1.50f, 1.40f },
-			{ 1.50f, 1.65f },
-			{ 1.50f, 1.90f },
-			{ 2.80f, 2.40f },
-			{ 3.05f, 2.40f },
-			{ 3.30f, 2.40f },
-			{ 3.55f, 2.40f },
-			{ 4.40f, 1.10f },
-			{ 4.40f, 1.35f },
-			{ 4.40f, 1.60f }
-		};
+		const glm::vec2 cell(32.0f, 32.0f);
+		m_IdleSprite = Apollo::SubTexture2D::CreateFromCoords(m_Atlas, { 0.0f, 0.0f }, cell);
+		std::vector<Apollo::Ref<Apollo::SubTexture2D>> walkFrames;
+		for (int i = 1; i <= 3; i++)
+			walkFrames.push_back(Apollo::SubTexture2D::CreateFromCoords(m_Atlas, { (float)i, 0.0f }, cell));
+		m_PlayerAnimation = Apollo::SpriteAnimation(std::move(walkFrames), 0.12f);
+		m_GoalSprite = Apollo::SubTexture2D::CreateFromCoords(m_Atlas, { 4.0f, 0.0f }, cell);
+
+		m_LevelPath = "assets/levels/room.txt";
+		ReloadLevel();
 	}
 
 	void OnAttach() override
@@ -48,6 +46,7 @@ public:
 		m_FrameSeconds = m_FrameSeconds * 0.9f + ts.GetSeconds() * 0.1f;
 
 		const ImGuiIO& io = ImGui::GetIO();
+		m_Moving = false;
 		if (m_ViewportFocused || !io.WantCaptureKeyboard)
 		{
 			glm::vec2 input(0.0f);
@@ -60,6 +59,12 @@ public:
 			if (Apollo::Input::IsKeyPressed(APOLLO_KEY_D))
 				input.x += 1.0f;
 
+			m_Moving = input.x != 0.0f || input.y != 0.0f;
+			if (input.x < 0.0f)
+				m_FaceLeft = true;
+			else if (input.x > 0.0f)
+				m_FaceLeft = false;
+
 			if (input.x != 0.0f || input.y != 0.0f)
 			{
 				input = glm::normalize(input) * m_PlayerSpeed * ts.GetSeconds();
@@ -67,8 +72,8 @@ public:
 				TryMove(0.0f, input.y);
 			}
 
-			float worldWidth = s_GridX * s_TileSize;
-			float worldHeight = s_GridY * s_TileSize;
+			float worldWidth = m_Level.GetWidth() * m_Level.GetTileSize();
+			float worldHeight = m_Level.GetHeight() * m_Level.GetTileSize();
 			m_PlayerPos.x = Clamp(m_PlayerPos.x, m_PlayerHalf, worldWidth - m_PlayerHalf);
 			m_PlayerPos.y = Clamp(m_PlayerPos.y, m_PlayerHalf, worldHeight - m_PlayerHalf);
 
@@ -76,9 +81,21 @@ public:
 				m_CameraRotation += m_CameraRotateSpeed * ts.GetSeconds();
 			if (Apollo::Input::IsKeyPressed(APOLLO_KEY_E))
 				m_CameraRotation -= m_CameraRotateSpeed * ts.GetSeconds();
+
+			if (Apollo::Input::IsKeyPressed(APOLLO_KEY_R))
+			{
+				if (!m_ReloadHeld)
+					ReloadLevel();
+				m_ReloadHeld = true;
+			}
+			else
+			{
+				m_ReloadHeld = false;
+			}
 		}
 
 		m_ReachedGoal = Overlaps(m_PlayerPos, m_PlayerHalf, m_GoalPos, m_GoalHalf);
+		m_PlayerAnimation.Update(ts.GetSeconds(), m_Moving);
 
 		if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f)
 		{
@@ -105,20 +122,22 @@ public:
 		Apollo::Renderer2D::SetFlushEveryQuad(m_FlushEveryQuad);
 		Apollo::Renderer2D::BeginScene(m_Camera);
 
-		for (int y = 0; y < s_GridY; y++)
+		float tile = m_Level.GetTileSize();
+		for (int y = 0; y < m_Level.GetHeight(); y++)
 		{
-			for (int x = 0; x < s_GridX; x++)
+			for (int x = 0; x < m_Level.GetWidth(); x++)
 			{
-				glm::vec2 center((x + 0.5f) * s_TileSize, (y + 0.5f) * s_TileSize);
-				Apollo::Renderer2D::DrawQuad(center, { s_TileSize, s_TileSize }, m_FloorTexture);
+				glm::vec2 center((x + 0.5f) * tile, (y + 0.5f) * tile);
+				Apollo::Renderer2D::DrawQuad(center, { tile, tile }, m_FloorTexture);
 			}
 		}
 
-		for (const glm::vec2& obstacle : m_Obstacles)
-			Apollo::Renderer2D::DrawQuad(obstacle, { s_TileSize, s_TileSize }, m_BlockTexture);
+		for (const glm::vec2& obstacle : m_Level.GetObstacles())
+			Apollo::Renderer2D::DrawQuad(obstacle, { tile, tile }, m_BlockTexture);
 
-		Apollo::Renderer2D::DrawQuad(m_GoalPos, { s_TileSize, s_TileSize }, { 0.2f, 0.85f, 0.95f, 1.0f });
-		Apollo::Renderer2D::DrawQuad(m_PlayerPos, { m_PlayerHalf * 2.0f, m_PlayerHalf * 2.0f }, { 0.95f, 0.82f, 0.2f, 1.0f });
+		Apollo::Renderer2D::DrawQuad(m_GoalPos, { 0.36f, 0.36f }, m_GoalSprite);
+		const Apollo::Ref<Apollo::SubTexture2D>& playerSprite = m_Moving ? m_PlayerAnimation.GetFrame() : m_IdleSprite;
+		Apollo::Renderer2D::DrawQuad(m_PlayerPos, { 0.42f, 0.42f }, playerSprite, glm::vec4(1.0f), m_FaceLeft);
 
 		Apollo::Renderer2D::EndScene();
 		m_Framebuffer->Unbind();
@@ -153,7 +172,11 @@ public:
 		ImGui::Checkbox(u8"\u5173\u95ed\u5408\u6279\uff08\u6bcf\u4e2a\u56db\u8fb9\u5f62\u4e00\u6b21\u7ed8\u5236\uff09", &m_FlushEveryQuad);
 		ImGui::Separator();
 		ImGui::Text(u8"WASD \u79fb\u52a8\uff0cQ/E \u65cb\u8f6c\u76f8\u673a");
-		ImGui::Text(u8"\u9ec4\u8272\u662f\u89d2\u8272\uff0c\u9752\u8272\u683c\u5b50\u662f\u7ec8\u70b9");
+		ImGui::Text(u8"\u5173\u5361 %s", m_LevelPath.c_str());
+		ImGui::Text(u8"R \u91cd\u65b0\u8bfb\u53d6\u5173\u5361");
+		ImGui::Text(m_Moving ? u8"\u72b6\u6001: \u8d70\u52a8" : u8"\u72b6\u6001: \u7ad9\u7acb");
+		ImGui::Text(u8"\u56fe\u96c6\u5e27 %u", m_Moving ? m_PlayerAnimation.GetFrameIndex() + 1u : 0u);
+		ImGui::Text(u8"\u89d2\u8272\u548c\u65d7\u5e1c\u5171\u7528\u4e00\u5f20\u56fe\u96c6");
 		if (m_ReachedGoal)
 			ImGui::Text(u8"\u5230\u8fbe\u7ec8\u70b9");
 		ImGui::End();
@@ -180,12 +203,28 @@ private:
 
 	bool HitsObstacle(const glm::vec2& center) const
 	{
-		for (const glm::vec2& obstacle : m_Obstacles)
+		for (const glm::vec2& obstacle : m_Level.GetObstacles())
 		{
 			if (Overlaps(center, m_PlayerHalf, obstacle, m_ObstacleHalf))
 				return true;
 		}
 		return false;
+	}
+
+	void ReloadLevel()
+	{
+		Level next;
+		if (!next.Load(m_LevelPath))
+			return;
+
+		m_Level = std::move(next);
+		m_PlayerPos = m_Level.GetPlayer();
+		m_GoalPos = m_Level.GetGoal();
+		m_CameraRotation = 0.0f;
+		m_ReachedGoal = false;
+		m_Moving = false;
+		m_FaceLeft = false;
+		m_PlayerAnimation.Reset();
 	}
 
 	void TryMove(float dx, float dy)
@@ -196,20 +235,21 @@ private:
 	}
 
 private:
-	static constexpr int s_GridX = 24;
-	static constexpr int s_GridY = 16;
-	static constexpr float s_TileSize = 0.25f;
-
 	Apollo::OrthographicCamera m_Camera;
 	Apollo::Ref<Apollo::Framebuffer> m_Framebuffer;
 	glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
 	bool m_ViewportFocused = true;
 	Apollo::Ref<Apollo::Texture2D> m_FloorTexture;
 	Apollo::Ref<Apollo::Texture2D> m_BlockTexture;
+	Apollo::Ref<Apollo::Texture2D> m_Atlas;
+	Apollo::Ref<Apollo::SubTexture2D> m_IdleSprite;
+	Apollo::Ref<Apollo::SubTexture2D> m_GoalSprite;
+	Apollo::SpriteAnimation m_PlayerAnimation;
 
-	std::vector<glm::vec2> m_Obstacles;
-	glm::vec2 m_PlayerPos = { 0.55f, 0.55f };
-	glm::vec2 m_GoalPos = { 5.15f, 3.40f };
+	std::string m_LevelPath;
+	Level m_Level;
+	glm::vec2 m_PlayerPos = { 0.0f, 0.0f };
+	glm::vec2 m_GoalPos = { 0.0f, 0.0f };
 
 	float m_PlayerHalf = 0.09f;
 	float m_ObstacleHalf = 0.12f;
@@ -220,6 +260,9 @@ private:
 	float m_FrameSeconds = 0.0f;
 	bool m_FlushEveryQuad = false;
 	bool m_ReachedGoal = false;
+	bool m_Moving = false;
+	bool m_FaceLeft = false;
+	bool m_ReloadHeld = false;
 };
 
 class Sandbox : public Apollo::Application

@@ -212,19 +212,56 @@ namespace Apollo
 		DrawQuad(transform, s_Data->WhiteTexture, color);
 	}
 
+	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint, bool flipX)
+	{
+		DrawQuad(glm::vec3(position, 0.0f), size, subTexture, tint, flipX);
+	}
+
+	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint, bool flipX)
+	{
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position)
+			* glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
+		DrawQuad(transform, subTexture, tint, flipX);
+	}
+
 	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec4& tint)
+	{
+		constexpr glm::vec2 texCoords[] = {
+			{ 0.0f, 0.0f },
+			{ 1.0f, 0.0f },
+			{ 1.0f, 1.0f },
+			{ 0.0f, 1.0f }
+		};
+		DrawQuad(transform, texture, texCoords, tint);
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<SubTexture2D>& subTexture, const glm::vec4& tint, bool flipX)
+	{
+		const glm::vec2* source = subTexture->GetTexCoords();
+		glm::vec2 texCoords[4];
+		if (flipX)
+		{
+			texCoords[0] = { source[1].x, source[0].y };
+			texCoords[1] = { source[0].x, source[1].y };
+			texCoords[2] = { source[3].x, source[2].y };
+			texCoords[3] = { source[2].x, source[3].y };
+		}
+		else
+		{
+			for (int i = 0; i < 4; i++)
+				texCoords[i] = source[i];
+		}
+
+		DrawQuad(transform, subTexture->GetTexture(), texCoords, tint);
+	}
+
+	void Renderer2D::DrawQuad(const glm::mat4& transform, const Ref<Texture2D>& texture, const glm::vec2 texCoords[4], const glm::vec4& tint)
 	{
 		constexpr glm::vec4 positions[] = {
 			{ -0.5f, -0.5f, 0.0f, 1.0f },
 			{  0.5f, -0.5f, 0.0f, 1.0f },
 			{  0.5f,  0.5f, 0.0f, 1.0f },
 			{ -0.5f,  0.5f, 0.0f, 1.0f }
-		};
-		constexpr glm::vec2 texCoords[] = {
-			{ 0.0f, 0.0f },
-			{ 1.0f, 0.0f },
-			{ 1.0f, 1.0f },
-			{ 0.0f, 1.0f }
 		};
 
 		if (s_Data->QuadIndexCount >= Renderer2DData::MaxIndices)

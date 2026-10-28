@@ -117,6 +117,12 @@
     <ClInclude Include="src\Apollo\Renderer\Shader.h">
       <Filter>src\Apollo\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Apollo\Renderer\SpriteAnimation.h">
+      <Filter>src\Apollo\Renderer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Apollo\Renderer\SubTexture2D.h">
+      <Filter>src\Apollo\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Apollo\Renderer\Texture.h">
       <Filter>src\Apollo\Renderer</Filter>
     </ClInclude>
@@ -1455,6 +1461,12 @@
       <Filter>src\Apollo\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Apollo\Renderer\Shader.cpp">
+      <Filter>src\Apollo\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Apollo\Renderer\SpriteAnimation.cpp">
+      <Filter>src\Apollo\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Apollo\Renderer\SubTexture2D.cpp">
       <Filter>src\Apollo\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Apollo\Renderer\Texture.cpp">

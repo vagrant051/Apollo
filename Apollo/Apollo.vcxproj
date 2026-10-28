@@ -177,6 +177,8 @@ IF EXIST ..\bin\Dist-windows-x86_64\Apollo\Apollo.lib\ (xcopy /Q /E /Y /I ..\bin
     <ClInclude Include="src\Apollo\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Apollo\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Apollo\Renderer\Shader.h" />
+    <ClInclude Include="src\Apollo\Renderer\SpriteAnimation.h" />
+    <ClInclude Include="src\Apollo\Renderer\SubTexture2D.h" />
     <ClInclude Include="src\Apollo\Renderer\Texture.h" />
     <ClInclude Include="src\Apollo\Renderer\VertexArray.h" />
     <ClInclude Include="src\Apollo\Windows.h" />
@@ -625,6 +627,8 @@ IF EXIST ..\bin\Dist-windows-x86_64\Apollo\Apollo.lib\ (xcopy /Q /E /Y /I ..\bin
     <ClCompile Include="src\Apollo\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Apollo\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Apollo\Renderer\Shader.cpp" />
+    <ClCompile Include="src\Apollo\Renderer\SpriteAnimation.cpp" />
+    <ClCompile Include="src\Apollo\Renderer\SubTexture2D.cpp" />
     <ClCompile Include="src\Apollo\Renderer\Texture.cpp" />
     <ClCompile Include="src\Apollo\Renderer\VertexArray.cpp" />
     <ClCompile Include="src\Platform\OpenGL\OpenGLBuffer.cpp" />

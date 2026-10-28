@@ -22,6 +22,7 @@
 
 #include "Apollo/Renderer/RenderCommand.h"
 #include "Apollo/Renderer/Renderer.h"
+#include "Apollo/Renderer/Renderer2D.h"
 
 // Entry Point
 

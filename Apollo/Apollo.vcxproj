@@ -92,7 +92,8 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Debug-windows-x86_64\Apollo\Apollo.lib\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Apollo\Apollo.lib ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Apollo\Apollo.lib ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF NOT EXIST ..\bin\Debug-windows-x86_64\Sandbox (mkdir ..\bin\Debug-windows-x86_64\Sandbox)
+IF EXIST ..\bin\Debug-windows-x86_64\Apollo\Apollo.lib\ (xcopy /Q /E /Y /I ..\bin\Debug-windows-x86_64\Apollo\Apollo.lib ..\bin\Debug-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Debug-windows-x86_64\Apollo\Apollo.lib ..\bin\Debug-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -120,7 +121,8 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Release-windows-x86_64\Apollo\Apollo.lib\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Apollo\Apollo.lib ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Apollo\Apollo.lib ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF NOT EXIST ..\bin\Release-windows-x86_64\Sandbox (mkdir ..\bin\Release-windows-x86_64\Sandbox)
+IF EXIST ..\bin\Release-windows-x86_64\Apollo\Apollo.lib\ (xcopy /Q /E /Y /I ..\bin\Release-windows-x86_64\Apollo\Apollo.lib ..\bin\Release-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Release-windows-x86_64\Apollo\Apollo.lib ..\bin\Release-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Dist|x64'">
@@ -148,7 +150,8 @@
       <AdditionalDependencies>opengl32.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
     <PostBuildEvent>
-      <Command>IF EXIST ..\bin\Dist-windows-x86_64\Apollo\Apollo.lib\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Apollo\Apollo.lib ..\bin\Dist-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Apollo\Apollo.lib ..\bin\Dist-windows-x86_64\Sandbox &gt; nul)</Command>
+      <Command>IF NOT EXIST ..\bin\Dist-windows-x86_64\Sandbox (mkdir ..\bin\Dist-windows-x86_64\Sandbox)
+IF EXIST ..\bin\Dist-windows-x86_64\Apollo\Apollo.lib\ (xcopy /Q /E /Y /I ..\bin\Dist-windows-x86_64\Apollo\Apollo.lib ..\bin\Dist-windows-x86_64\Sandbox &gt; nul) ELSE (xcopy /Q /Y /I ..\bin\Dist-windows-x86_64\Apollo\Apollo.lib ..\bin\Dist-windows-x86_64\Sandbox &gt; nul)</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -170,6 +173,7 @@
     <ClInclude Include="src\Apollo\Renderer\OrthographicCamera.h" />
     <ClInclude Include="src\Apollo\Renderer\RenderCommand.h" />
     <ClInclude Include="src\Apollo\Renderer\Renderer.h" />
+    <ClInclude Include="src\Apollo\Renderer\Renderer2D.h" />
     <ClInclude Include="src\Apollo\Renderer\RendererAPI.h" />
     <ClInclude Include="src\Apollo\Renderer\Shader.h" />
     <ClInclude Include="src\Apollo\Renderer\Texture.h" />
@@ -615,6 +619,7 @@
     <ClCompile Include="src\Apollo\Renderer\OrthographicCamera.cpp" />
     <ClCompile Include="src\Apollo\Renderer\RenderCommand.cpp" />
     <ClCompile Include="src\Apollo\Renderer\Renderer.cpp" />
+    <ClCompile Include="src\Apollo\Renderer\Renderer2D.cpp" />
     <ClCompile Include="src\Apollo\Renderer\RendererAPI.cpp" />
     <ClCompile Include="src\Apollo\Renderer\Shader.cpp" />
     <ClCompile Include="src\Apollo\Renderer\Texture.cpp" />

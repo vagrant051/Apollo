@@ -23,6 +23,12 @@ include "Apollo/vendor/GLFW"
 include "Apollo/vendor/Glad"
 include "Apollo/vendor/imgui"
 
+project "GLFW"
+    staticruntime "on"
+
+project "ImGui"
+    staticruntime "on"
+
 project "Apollo" 
     location "Apollo"
     kind "StaticLib" 
@@ -76,6 +82,7 @@ project "Apollo"
 
         postbuildcommands
         {
+            ("{MKDIR} ../bin/" .. outputdir .. "/Sandbox"),
             ("{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox")
         }
 
@@ -102,6 +109,7 @@ project "Sandbox"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
+    debugdir "%{cfg.targetdir}"
 
     files
     {
@@ -125,10 +133,16 @@ project "Sandbox"
     filter "system:windows"
         cppdialect "c++17"
         systemversion "latest"
+        buildoptions { "/utf-8" }
 
         defines
         {
             "APOLLO_PLATFORM_WINDOWS",
+        }
+
+        postbuildcommands
+        {
+            "{COPYDIR} ../assets %{cfg.targetdir}/assets"
         }
 
     filter "configurations:Debug"

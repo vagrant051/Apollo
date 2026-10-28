@@ -105,6 +105,9 @@
     <ClInclude Include="src\Apollo\Renderer\Renderer.h">
       <Filter>src\Apollo\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Apollo\Renderer\Renderer2D.h">
+      <Filter>src\Apollo\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Apollo\Renderer\RendererAPI.h">
       <Filter>src\Apollo\Renderer</Filter>
     </ClInclude>
@@ -1434,6 +1437,9 @@
       <Filter>src\Apollo\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Apollo\Renderer\Renderer.cpp">
+      <Filter>src\Apollo\Renderer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Apollo\Renderer\Renderer2D.cpp">
       <Filter>src\Apollo\Renderer</Filter>
     </ClCompile>
     <ClCompile Include="src\Apollo\Renderer\RendererAPI.cpp">

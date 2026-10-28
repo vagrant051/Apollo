@@ -60,8 +60,6 @@ namespace Apollo
 
 	void ImguiLayer::OnImGuiRender()
 	{
-		static bool show = true;
-		ImGui::ShowDemoWindow(&show);// 当前OnImGuiRender层显示DemoUI窗口
 	}
 
 	void ImguiLayer::Begin()

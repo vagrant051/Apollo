@@ -17,6 +17,12 @@ namespace Apollo
 		void Bind() const override;
 		void Unbind() const override;
 
+		void SetInt(const std::string& name, int value) override;
+		void SetIntArray(const std::string& name, const int* values, uint32_t count) override;
+		void SetFloat3(const std::string& name, const glm::vec3& value) override;
+		void SetFloat4(const std::string& name, const glm::vec4& value) override;
+		void SetMat4(const std::string& name, const glm::mat4& value) override;
+
 		void UploadUniformint(const std::string& name, const int& values);
 		void UploadUniformFloat(const std::string& name, const float& values);
 		void UploadUniformFloat2(const std::string& name, const glm::vec2& values);

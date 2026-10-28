@@ -36,6 +36,11 @@ public:
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.Fonts->AddFontFromFileTTF("C:\\Windows\\Fonts\\simhei.ttf", 18.0f, nullptr, io.Fonts->GetGlyphRangesChineseFull());
+
+		Apollo::FramebufferSpecification spec;
+		spec.Width = 1280;
+		spec.Height = 720;
+		m_Framebuffer = Apollo::Framebuffer::Create(spec);
 	}
 
 	void OnUpdate(Apollo::Timestep ts) override
@@ -43,7 +48,7 @@ public:
 		m_FrameSeconds = m_FrameSeconds * 0.9f + ts.GetSeconds() * 0.1f;
 
 		const ImGuiIO& io = ImGui::GetIO();
-		if (!io.WantCaptureKeyboard)
+		if (m_ViewportFocused || !io.WantCaptureKeyboard)
 		{
 			glm::vec2 input(0.0f);
 			if (Apollo::Input::IsKeyPressed(APOLLO_KEY_W))
@@ -75,6 +80,22 @@ public:
 
 		m_ReachedGoal = Overlaps(m_PlayerPos, m_PlayerHalf, m_GoalPos, m_GoalHalf);
 
+		if (m_ViewportSize.x > 0.0f && m_ViewportSize.y > 0.0f)
+		{
+			uint32_t width = (uint32_t)m_ViewportSize.x;
+			uint32_t height = (uint32_t)m_ViewportSize.y;
+			Apollo::FramebufferSpecification spec = m_Framebuffer->GetSpecification();
+			if (spec.Width != width || spec.Height != height)
+			{
+				m_Framebuffer->Resize(width, height);
+				float aspect = m_ViewportSize.x / m_ViewportSize.y;
+				constexpr float orthoHeight = 1.8f;
+				float orthoWidth = orthoHeight * aspect;
+				m_Camera.SetProjection(-orthoWidth * 0.5f, orthoWidth * 0.5f, -orthoHeight * 0.5f, orthoHeight * 0.5f);
+			}
+		}
+
+		m_Framebuffer->Bind();
 		Apollo::RenderCommand::SetClearColor({ 0.08f, 0.08f, 0.1f, 1.0f });
 		Apollo::RenderCommand::Clear();
 
@@ -100,12 +121,29 @@ public:
 		Apollo::Renderer2D::DrawQuad(m_PlayerPos, { m_PlayerHalf * 2.0f, m_PlayerHalf * 2.0f }, { 0.95f, 0.82f, 0.2f, 1.0f });
 
 		Apollo::Renderer2D::EndScene();
+		m_Framebuffer->Unbind();
+
+		Apollo::RenderCommand::SetClearColor({ 0.12f, 0.12f, 0.12f, 1.0f });
+		Apollo::RenderCommand::Clear();
 	}
 
 	void OnImGuiRender() override
 	{
 		auto stats = Apollo::Renderer2D::GetStats();
 		float fps = m_FrameSeconds > 0.0f ? 1.0f / m_FrameSeconds : 0.0f;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::Begin(u8"\u89c6\u53e3");
+		m_ViewportFocused = ImGui::IsWindowFocused();
+		ImVec2 viewportPanelSize = ImGui::GetContentRegionAvail();
+		m_ViewportSize = { viewportPanelSize.x, viewportPanelSize.y };
+		if (viewportPanelSize.x > 0.0f && viewportPanelSize.y > 0.0f)
+		{
+			ImTextureID texture = (ImTextureID)(uintptr_t)m_Framebuffer->GetColorAttachmentRendererID();
+			ImGui::Image(texture, viewportPanelSize, ImVec2(0.0f, 1.0f), ImVec2(1.0f, 0.0f));
+		}
+		ImGui::End();
+		ImGui::PopStyleVar();
 
 		ImGui::Begin("Apollo");
 		ImGui::Text(u8"\u5e27\u65f6\u95f4 %.2f ms   %.0f FPS", m_FrameSeconds * 1000.0f, fps);
@@ -163,6 +201,9 @@ private:
 	static constexpr float s_TileSize = 0.25f;
 
 	Apollo::OrthographicCamera m_Camera;
+	Apollo::Ref<Apollo::Framebuffer> m_Framebuffer;
+	glm::vec2 m_ViewportSize = { 0.0f, 0.0f };
+	bool m_ViewportFocused = true;
 	Apollo::Ref<Apollo::Texture2D> m_FloorTexture;
 	Apollo::Ref<Apollo::Texture2D> m_BlockTexture;
 

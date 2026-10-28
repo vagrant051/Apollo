@@ -93,6 +93,9 @@
     <ClInclude Include="src\Apollo\Renderer\Buffer.h">
       <Filter>src\Apollo\Renderer</Filter>
     </ClInclude>
+    <ClInclude Include="src\Apollo\Renderer\Framebuffer.h">
+      <Filter>src\Apollo\Renderer</Filter>
+    </ClInclude>
     <ClInclude Include="src\Apollo\Renderer\GraphicsContext.h">
       <Filter>src\Apollo\Renderer</Filter>
     </ClInclude>
@@ -136,6 +139,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLContext.h">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Platform\OpenGL\OpenGLFramebuffer.h">
       <Filter>src\Platform\OpenGL</Filter>
     </ClInclude>
     <ClInclude Include="src\Platform\OpenGL\OpenGLRendererAPI.h">
@@ -1430,6 +1436,9 @@
     <ClCompile Include="src\Apollo\Renderer\Buffer.cpp">
       <Filter>src\Apollo\Renderer</Filter>
     </ClCompile>
+    <ClCompile Include="src\Apollo\Renderer\Framebuffer.cpp">
+      <Filter>src\Apollo\Renderer</Filter>
+    </ClCompile>
     <ClCompile Include="src\Apollo\Renderer\OrthographicCamera.cpp">
       <Filter>src\Apollo\Renderer</Filter>
     </ClCompile>
@@ -1458,6 +1467,9 @@
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLContext.cpp">
+      <Filter>src\Platform\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Platform\OpenGL\OpenGLFramebuffer.cpp">
       <Filter>src\Platform\OpenGL</Filter>
     </ClCompile>
     <ClCompile Include="src\Platform\OpenGL\OpenGLRendererAPI.cpp">

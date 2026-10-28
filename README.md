@@ -8,6 +8,7 @@ Windows 上的 OpenGL 2D 渲染练习。工程骨架参考 [Hazel](https://githu
 - PNG 用 Windows 自带的 WIC 读进来，再上传到 GPU。`OpenGLTexture2D` 不再是空函数。
 - `Renderer2D` 把四边形攒成一批再画。整张地板共用一张贴图时，合批后是 1 次 draw call。
 - Sandbox 里用 WASD 移动，方块会挡住路，走到青色格子算到达终点。面板上可以关掉合批，draw call 会变成和四边形数量一样。
+- 场景画进帧缓冲，显示在「视口」窗口里。视口变宽变窄时，相机会跟着改宽高比，画面不会被拉扁。
 
 ## 操作
 
